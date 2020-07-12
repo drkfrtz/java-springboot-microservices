@@ -1,9 +1,12 @@
-package codes.drkfrtz.movieinfoservice.models;
+package codes.drkfrtz.moviecatalogservice.models;
 
 public class Movie {
     private int movieId;
     private String title;
     private String description;
+
+    public Movie() {
+    }
 
     public Movie(int movieId, String title, String description) {
         this.movieId = movieId;
