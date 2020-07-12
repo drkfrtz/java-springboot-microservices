@@ -1,8 +1,6 @@
 package codes.drkfrtz.moviecatalogservice.resources;
 
-import codes.drkfrtz.moviecatalogservice.models.CatalogItem;
-import codes.drkfrtz.moviecatalogservice.models.Movie;
-import codes.drkfrtz.moviecatalogservice.models.Rating;
+import codes.drkfrtz.moviecatalogservice.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,14 +23,11 @@ public class MovieCatalogResource {
     private WebClient.Builder webClientBuilder;
 
     @RequestMapping("/{userId}")
-    public List<CatalogItem> getCatalog(@PathVariable("userId") String userId) {
+    public Catalog getCatalog(@PathVariable("userId") String userId) {
 
-        List<Rating> ratings = Arrays.asList(
-                new Rating(1, 4),
-                new Rating(2, 3)
-        );
+        UserRating ratings = restTemplate.getForObject("http://localhost:8083/ratings/users/" + userId, UserRating.class);
 
-        return ratings.stream().map(rating -> {
+        List<CatalogItem> catalogItems = ratings.getUserRatings().stream().map(rating -> {
             Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
 
             /*
@@ -46,5 +41,7 @@ public class MovieCatalogResource {
 
             return new CatalogItem(movie.getTitle(), movie.getDescription(), rating.getScore());
         }).collect(Collectors.toList());
+
+        return new Catalog(catalogItems);
     }
 }
