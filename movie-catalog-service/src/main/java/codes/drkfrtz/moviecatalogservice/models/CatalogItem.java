@@ -1,4 +1,4 @@
-package codes.drkfrtz.moviecatalogservice.model;
+package codes.drkfrtz.moviecatalogservice.models;
 
 public class CatalogItem {
 
