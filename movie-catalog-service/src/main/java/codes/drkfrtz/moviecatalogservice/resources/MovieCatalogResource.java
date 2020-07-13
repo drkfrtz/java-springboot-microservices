@@ -2,6 +2,8 @@ package codes.drkfrtz.moviecatalogservice.resources;
 
 import codes.drkfrtz.moviecatalogservice.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/catalog")
+@RequestMapping(value="/catalog", produces= MediaType.APPLICATION_JSON_VALUE)
 public class MovieCatalogResource {
 
     @Autowired
@@ -25,10 +27,10 @@ public class MovieCatalogResource {
     @RequestMapping("/{userId}")
     public Catalog getCatalog(@PathVariable("userId") String userId) {
 
-        UserRating ratings = restTemplate.getForObject("http://localhost:8083/ratings/users/" + userId, UserRating.class);
+        UserRating ratings = restTemplate.getForObject("http://ratings-data-service/ratings/users/" + userId, UserRating.class);
 
         List<CatalogItem> catalogItems = ratings.getUserRatings().stream().map(rating -> {
-            Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
+            Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
 
             /*
             Movie movie = webClientBuilder.build()
